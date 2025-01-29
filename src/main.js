@@ -7,6 +7,11 @@ const { width, height } = canvas;
 let lastTime;
 let currentSlide = 0;
 let canNavigate = true;
+let transitionProgress = 0;
+let isTransitioning = false;
+let transitionDirection = 1; // 1 for right, -1 for left
+const TRANSITION_SPEED = 0.003; // Adjust for faster/slower transitions
+const PIXEL_SIZE = 8; // Size of the "pixels" in the transition effect
 
 // Slide configuration
 const slides = [
@@ -51,16 +56,31 @@ const styles = {
 };
 
 function update() {
+    if (isTransitioning) {
+        transitionProgress += TRANSITION_SPEED;
+        if (transitionProgress >= 1) {
+            isTransitioning = false;
+            transitionProgress = 0;
+        }
+        return;
+    }
+
     const [p1] = getInput();
     
     if (canNavigate) {
         if (p1.DPAD_RIGHT.pressed) {
             if (currentSlide < slides.length - 1) {
+                transitionDirection = 1;
+                isTransitioning = true;
+                transitionProgress = 0;
                 currentSlide++;
                 canNavigate = false;
             }
         } else if (p1.DPAD_LEFT.pressed) {
             if (currentSlide > 0) {
+                transitionDirection = -1;
+                isTransitioning = true;
+                transitionProgress = 0;
                 currentSlide--;
                 canNavigate = false;
             }
@@ -72,18 +92,22 @@ function update() {
     }
 }
 
-function draw() {
-    const slide = slides[currentSlide];
+function renderSlide(slide, offsetX = 0) {
+    // Create an offscreen canvas for the slide
+    const offscreen = document.createElement('canvas');
+    offscreen.width = width;
+    offscreen.height = height;
+    const offCtx = offscreen.getContext('2d');
     
     // Clear and set background
-    ctx.fillStyle = styles.background;
-    ctx.fillRect(0, 0, width, height);
+    offCtx.fillStyle = styles.background;
+    offCtx.fillRect(0, 0, width, height);
     
     // Draw title
-    ctx.fillStyle = styles.title.color;
-    ctx.font = `${styles.title.fontSize}px ${styles.title.font}`;
-    ctx.textAlign = 'center';
-    ctx.fillText(slide.title, width/2, styles.title.marginTop);
+    offCtx.fillStyle = styles.title.color;
+    offCtx.font = `${styles.title.fontSize}px ${styles.title.font}`;
+    offCtx.textAlign = 'center';
+    offCtx.fillText(slide.title, width/2, styles.title.marginTop);
     
     // Calculate content area
     let contentStartX = styles.bullets.marginLeft;
@@ -98,26 +122,68 @@ function draw() {
             const imgY = height * 0.3;
             
             if (slide.imagePosition === 'left') {
-                ctx.drawImage(img, width * 0.05, imgY, imgWidth, imgHeight);
+                offCtx.drawImage(img, width * 0.05, imgY, imgWidth, imgHeight);
                 contentStartX = width * 0.5;
                 contentWidth = width * 0.45;
             } else {
-                ctx.drawImage(img, width * 0.55, imgY, imgWidth, imgHeight);
+                offCtx.drawImage(img, width * 0.55, imgY, imgWidth, imgHeight);
                 contentWidth = width * 0.45;
             }
         }
     }
     
     // Draw bullets
-    ctx.font = `${styles.bullets.fontSize}px ${styles.bullets.font}`;
-    ctx.textAlign = 'left';
-    ctx.fillStyle = styles.bullets.color;
+    offCtx.font = `${styles.bullets.fontSize}px ${styles.bullets.font}`;
+    offCtx.textAlign = 'left';
+    offCtx.fillStyle = styles.bullets.color;
     
     slide.bullets.forEach((bullet, index) => {
         const y = styles.bullets.marginTop + 
                  (index * styles.bullets.fontSize * styles.bullets.lineHeight);
-        ctx.fillText(`• ${bullet}`, contentStartX, y);
+        offCtx.fillText(`• ${bullet}`, contentStartX, y);
     });
+
+    return offscreen;
+}
+
+function draw() {
+    // Clear main canvas
+    ctx.fillStyle = styles.background;
+    ctx.fillRect(0, 0, width, height);
+
+    const currentSlideCanvas = renderSlide(slides[currentSlide]);
+    
+    if (!isTransitioning) {
+        ctx.drawImage(currentSlideCanvas, 0, 0);
+        return;
+    }
+
+    // During transition, render both current and adjacent slide
+    const progress = transitionDirection > 0 ? transitionProgress : 1 - transitionProgress;
+    const prevSlideIndex = transitionDirection > 0 ? currentSlide - 1 : currentSlide + 1;
+    const prevSlide = slides[prevSlideIndex];
+    
+    if (prevSlide) {
+        const prevSlideCanvas = renderSlide(prevSlide);
+        
+        // Draw slides with pixelated transition effect
+        for (let x = 0; x < width; x += PIXEL_SIZE) {
+            for (let y = 0; y < height; y += PIXEL_SIZE) {
+                const pixelProgress = (x / width + Math.sin(y * 0.05) * 0.1) - progress;
+                
+                if (pixelProgress > 0) {
+                    ctx.drawImage(prevSlideCanvas, 
+                        x, y, PIXEL_SIZE, PIXEL_SIZE,
+                        x, y, PIXEL_SIZE, PIXEL_SIZE);
+                } else {
+                    ctx.drawImage(currentSlideCanvas,
+                        x, y, PIXEL_SIZE, PIXEL_SIZE,
+                        x, y, PIXEL_SIZE, PIXEL_SIZE);
+                }
+            }
+        }
+    }
+    
 }
 
 const slideImages = {};
