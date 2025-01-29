@@ -92,15 +92,6 @@ function update() {
     }
 }
 
-// Create two reusable offscreen canvases
-const offscreenA = document.createElement('canvas');
-const offscreenB = document.createElement('canvas');
-offscreenA.width = width;
-offscreenA.height = height;
-offscreenB.width = width;
-offscreenB.height = height;
-const offCtxA = offscreenA.getContext('2d');
-const offCtxB = offscreenB.getContext('2d');
 
 function renderSlide(slide, targetCtx) {
     // Clear and set background
@@ -149,46 +140,51 @@ function renderSlide(slide, targetCtx) {
 }
 
 function draw() {
-    // Clear main canvas
+    // Clear canvas
     ctx.fillStyle = styles.background;
     ctx.fillRect(0, 0, width, height);
 
     if (!isTransitioning) {
-        // Just render current slide directly
         renderSlide(slides[currentSlide], ctx);
         return;
     }
 
-    // During transition, render to offscreen canvases first
-    const fromSlide = transitionDirection > 0 ? 
-        currentSlide - 1 : 
-        currentSlide;
-    const toSlide = transitionDirection > 0 ? 
-        currentSlide : 
-        currentSlide - 1;
+    // During transition
+    const fromSlide = transitionDirection > 0 ? currentSlide - 1 : currentSlide;
+    const toSlide = transitionDirection > 0 ? currentSlide : currentSlide - 1;
 
     if (fromSlide >= 0 && fromSlide < slides.length && 
         toSlide >= 0 && toSlide < slides.length) {
         
-        // Render both slides to offscreen canvases
-        renderSlide(slides[fromSlide], offCtxA);
-        renderSlide(slides[toSlide], offCtxB);
+        // Save the current context state
+        ctx.save();
         
-        // Draw transition effect
-        const progress = transitionProgress;
+        // Create a clipping region for the first slide
+        ctx.beginPath();
+        ctx.rect(0, 0, width * (1 - transitionProgress), height);
+        ctx.clip();
+        
+        // Render first slide
+        renderSlide(slides[fromSlide], ctx);
+        
+        // Restore and create clipping region for second slide
+        ctx.restore();
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(width * (1 - transitionProgress), 0, width * transitionProgress, height);
+        ctx.clip();
+        
+        // Render second slide
+        renderSlide(slides[toSlide], ctx);
+        
+        // Restore context
+        ctx.restore();
 
-        for (let x = 0; x < width; x += PIXEL_SIZE) {
-            const pixelProgress = (x / width) - progress;
-            
-            if (pixelProgress > 0) {
-                ctx.drawImage(offscreenA, 
-                    x, 0, PIXEL_SIZE, height,
-                    x, 0, PIXEL_SIZE, height);
-            } else {
-                ctx.drawImage(offscreenB,
-                    x, 0, PIXEL_SIZE, height,
-                    x, 0, PIXEL_SIZE, height);
-            }
+        // Draw pixelated transition line
+        const lineX = width * (1 - transitionProgress);
+        for (let y = 0; y < height; y += PIXEL_SIZE) {
+            ctx.fillStyle = y % (PIXEL_SIZE * 2) === 0 ? '#fff' : '#000';
+            ctx.fillRect(lineX - 2, y, 4, PIXEL_SIZE);
         }
     }
 }
