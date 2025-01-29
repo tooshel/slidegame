@@ -10,8 +10,8 @@ let canNavigate = true;
 let transitionProgress = 0;
 let isTransitioning = false;
 let transitionDirection = 1; // 1 for right, -1 for left
-const TRANSITION_SPEED = 0.003; // Adjust for faster/slower transitions
-const PIXEL_SIZE = 8; // Size of the "pixels" in the transition effect
+const TRANSITION_SPEED = 0.015; // 5x faster transition
+const PIXEL_SIZE = 16; // Larger pixels = less work
 
 // Slide configuration
 const slides = [
@@ -148,60 +148,48 @@ function renderSlide(slide, targetCtx) {
     });
 }
 
-let prevRenderedSlide = -1;
-let nextRenderedSlide = -1;
-
 function draw() {
     // Clear main canvas
     ctx.fillStyle = styles.background;
     ctx.fillRect(0, 0, width, height);
 
-    // Render current slide if needed
-    if (nextRenderedSlide !== currentSlide) {
-        renderSlide(slides[currentSlide], offCtxA);
-        nextRenderedSlide = currentSlide;
-    }
-    
     if (!isTransitioning) {
-        ctx.drawImage(offscreenA, 0, 0);
+        // Just render current slide directly
+        renderSlide(slides[currentSlide], ctx);
         return;
     }
 
-    // During transition, render both current and adjacent slide
-    const adjacentSlideIndex = transitionDirection > 0 ? 
+    // During transition, render to offscreen canvases first
+    const fromSlide = transitionDirection > 0 ? 
         currentSlide - 1 : 
-        currentSlide + 1;
+        currentSlide;
+    const toSlide = transitionDirection > 0 ? 
+        currentSlide : 
+        currentSlide - 1;
 
-    if (adjacentSlideIndex >= 0 && adjacentSlideIndex < slides.length) {
-        // Render adjacent slide if needed
-        if (prevRenderedSlide !== adjacentSlideIndex) {
-            renderSlide(slides[adjacentSlideIndex], offCtxB);
-            prevRenderedSlide = adjacentSlideIndex;
-        }
+    if (fromSlide >= 0 && fromSlide < slides.length && 
+        toSlide >= 0 && toSlide < slides.length) {
         
-        // Draw slides with pixelated transition effect
-        const progress = transitionDirection > 0 ? 
-            transitionProgress : 
-            1 - transitionProgress;
+        // Render both slides to offscreen canvases
+        renderSlide(slides[fromSlide], offCtxA);
+        renderSlide(slides[toSlide], offCtxB);
+        
+        // Draw transition effect
+        const progress = transitionProgress;
 
         for (let x = 0; x < width; x += PIXEL_SIZE) {
-            for (let y = 0; y < height; y += PIXEL_SIZE) {
-                const pixelProgress = (x / width + Math.sin(y * 0.05) * 0.1) - progress;
-                
-                if (pixelProgress > 0) {
-                    ctx.drawImage(offscreenB, 
-                        x, y, PIXEL_SIZE, PIXEL_SIZE,
-                        x, y, PIXEL_SIZE, PIXEL_SIZE);
-                } else {
-                    ctx.drawImage(offscreenA,
-                        x, y, PIXEL_SIZE, PIXEL_SIZE,
-                        x, y, PIXEL_SIZE, PIXEL_SIZE);
-                }
+            const pixelProgress = (x / width) - progress;
+            
+            if (pixelProgress > 0) {
+                ctx.drawImage(offscreenA, 
+                    x, 0, PIXEL_SIZE, height,
+                    x, 0, PIXEL_SIZE, height);
+            } else {
+                ctx.drawImage(offscreenB,
+                    x, 0, PIXEL_SIZE, height,
+                    x, 0, PIXEL_SIZE, height);
             }
         }
-    } else {
-        // No adjacent slide, just show current
-        ctx.drawImage(offscreenA, 0, 0);
     }
 }
 
