@@ -92,22 +92,26 @@ function update() {
     }
 }
 
-function renderSlide(slide, offsetX = 0) {
-    // Create an offscreen canvas for the slide
-    const offscreen = document.createElement('canvas');
-    offscreen.width = width;
-    offscreen.height = height;
-    const offCtx = offscreen.getContext('2d');
-    
+// Create two reusable offscreen canvases
+const offscreenA = document.createElement('canvas');
+const offscreenB = document.createElement('canvas');
+offscreenA.width = width;
+offscreenA.height = height;
+offscreenB.width = width;
+offscreenB.height = height;
+const offCtxA = offscreenA.getContext('2d');
+const offCtxB = offscreenB.getContext('2d');
+
+function renderSlide(slide, targetCtx) {
     // Clear and set background
-    offCtx.fillStyle = styles.background;
-    offCtx.fillRect(0, 0, width, height);
+    targetCtx.fillStyle = styles.background;
+    targetCtx.fillRect(0, 0, width, height);
     
     // Draw title
-    offCtx.fillStyle = styles.title.color;
-    offCtx.font = `${styles.title.fontSize}px ${styles.title.font}`;
-    offCtx.textAlign = 'center';
-    offCtx.fillText(slide.title, width/2, styles.title.marginTop);
+    targetCtx.fillStyle = styles.title.color;
+    targetCtx.font = `${styles.title.fontSize}px ${styles.title.font}`;
+    targetCtx.textAlign = 'center';
+    targetCtx.fillText(slide.title, width/2, styles.title.marginTop);
     
     // Calculate content area
     let contentStartX = styles.bullets.marginLeft;
@@ -122,68 +126,83 @@ function renderSlide(slide, offsetX = 0) {
             const imgY = height * 0.3;
             
             if (slide.imagePosition === 'left') {
-                offCtx.drawImage(img, width * 0.05, imgY, imgWidth, imgHeight);
+                targetCtx.drawImage(img, width * 0.05, imgY, imgWidth, imgHeight);
                 contentStartX = width * 0.5;
                 contentWidth = width * 0.45;
             } else {
-                offCtx.drawImage(img, width * 0.55, imgY, imgWidth, imgHeight);
+                targetCtx.drawImage(img, width * 0.55, imgY, imgWidth, imgHeight);
                 contentWidth = width * 0.45;
             }
         }
     }
     
     // Draw bullets
-    offCtx.font = `${styles.bullets.fontSize}px ${styles.bullets.font}`;
-    offCtx.textAlign = 'left';
-    offCtx.fillStyle = styles.bullets.color;
+    targetCtx.font = `${styles.bullets.fontSize}px ${styles.title.font}`;
+    targetCtx.textAlign = 'left';
+    targetCtx.fillStyle = styles.bullets.color;
     
     slide.bullets.forEach((bullet, index) => {
         const y = styles.bullets.marginTop + 
                  (index * styles.bullets.fontSize * styles.bullets.lineHeight);
-        offCtx.fillText(`• ${bullet}`, contentStartX, y);
+        targetCtx.fillText(`• ${bullet}`, contentStartX, y);
     });
-
-    return offscreen;
 }
+
+let prevRenderedSlide = -1;
+let nextRenderedSlide = -1;
 
 function draw() {
     // Clear main canvas
     ctx.fillStyle = styles.background;
     ctx.fillRect(0, 0, width, height);
 
-    const currentSlideCanvas = renderSlide(slides[currentSlide]);
+    // Render current slide if needed
+    if (nextRenderedSlide !== currentSlide) {
+        renderSlide(slides[currentSlide], offCtxA);
+        nextRenderedSlide = currentSlide;
+    }
     
     if (!isTransitioning) {
-        ctx.drawImage(currentSlideCanvas, 0, 0);
+        ctx.drawImage(offscreenA, 0, 0);
         return;
     }
 
     // During transition, render both current and adjacent slide
-    const progress = transitionDirection > 0 ? transitionProgress : 1 - transitionProgress;
-    const prevSlideIndex = transitionDirection > 0 ? currentSlide - 1 : currentSlide + 1;
-    const prevSlide = slides[prevSlideIndex];
-    
-    if (prevSlide) {
-        const prevSlideCanvas = renderSlide(prevSlide);
+    const adjacentSlideIndex = transitionDirection > 0 ? 
+        currentSlide - 1 : 
+        currentSlide + 1;
+
+    if (adjacentSlideIndex >= 0 && adjacentSlideIndex < slides.length) {
+        // Render adjacent slide if needed
+        if (prevRenderedSlide !== adjacentSlideIndex) {
+            renderSlide(slides[adjacentSlideIndex], offCtxB);
+            prevRenderedSlide = adjacentSlideIndex;
+        }
         
         // Draw slides with pixelated transition effect
+        const progress = transitionDirection > 0 ? 
+            transitionProgress : 
+            1 - transitionProgress;
+
         for (let x = 0; x < width; x += PIXEL_SIZE) {
             for (let y = 0; y < height; y += PIXEL_SIZE) {
                 const pixelProgress = (x / width + Math.sin(y * 0.05) * 0.1) - progress;
                 
                 if (pixelProgress > 0) {
-                    ctx.drawImage(prevSlideCanvas, 
+                    ctx.drawImage(offscreenB, 
                         x, y, PIXEL_SIZE, PIXEL_SIZE,
                         x, y, PIXEL_SIZE, PIXEL_SIZE);
                 } else {
-                    ctx.drawImage(currentSlideCanvas,
+                    ctx.drawImage(offscreenA,
                         x, y, PIXEL_SIZE, PIXEL_SIZE,
                         x, y, PIXEL_SIZE, PIXEL_SIZE);
                 }
             }
         }
+    } else {
+        // No adjacent slide, just show current
+        ctx.drawImage(offscreenA, 0, 0);
     }
-    
 }
 
 const slideImages = {};
