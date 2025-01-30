@@ -5,6 +5,8 @@ import {
   drawLoadingScreen,
 } from "./utils.js";
 
+const VERSION = '0.0.0'; // Fallback version if package.json isn't available
+
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d", { alpha: false }); // Optimize for non-transparent canvas
 canvas.height = 720;
@@ -87,6 +89,12 @@ function renderSlide(slide, targetCtx) {
   // Clear and set background
   targetCtx.fillStyle = styles.background;
   targetCtx.fillRect(0, 0, width, height);
+  
+  // Draw version number in bottom-left corner
+  targetCtx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+  targetCtx.font = '16px Roboto';
+  targetCtx.textAlign = 'left';
+  targetCtx.fillText(`v${VERSION}`, 10, height - 10);
 
   // Handle image if present
   if (slide.image) {
