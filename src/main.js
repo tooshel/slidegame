@@ -6,11 +6,12 @@ import {
 } from "./utils.js";
 
 const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+const ctx = canvas.getContext("2d", { alpha: false }); // Optimize for non-transparent canvas
 canvas.height = 720;
 canvas.width = 1280;
 const { width, height } = canvas;
 let lastTime = performance.now();
+const imageCache = new Map(); // Cache for image dimensions
 let isLoading = true;
 let currentSlide = 0;
 let canNavigate = true;
@@ -92,25 +93,37 @@ function renderSlide(slide, targetCtx) {
     const img = slideImages[slide.image];
     if (img) {
       if (slide.imagePosition === "fullscreen") {
-        // Calculate scaling to maintain aspect ratio while filling screen
-        const imgRatio = img.width / img.height;
-        const screenRatio = width / height;
-        let drawWidth, drawHeight, drawX, drawY;
-
-        if (imgRatio > screenRatio) {
-          // Image is wider than screen ratio
-          drawHeight = height;
-          drawWidth = height * imgRatio;
-          drawY = 0;
-          drawX = (width - drawWidth) / 2;
-        } else {
-          // Image is taller than screen ratio
-          drawWidth = width;
-          drawHeight = width / imgRatio;
-          drawX = 0;
-          drawY = (height - drawHeight) / 2;
+        // Use cached dimensions if available
+        let dims = imageCache.get(slide.image);
+        if (!dims) {
+          // Calculate scaling to maintain aspect ratio while filling screen
+          const imgRatio = img.width / img.height;
+          const screenRatio = width / height;
+          
+          if (imgRatio > screenRatio) {
+            dims = {
+              drawHeight: height,
+              drawWidth: height * imgRatio,
+              drawY: 0,
+              drawX: (width - height * imgRatio) / 2
+            };
+          } else {
+            dims = {
+              drawWidth: width,
+              drawHeight: width / imgRatio,
+              drawX: 0,
+              drawY: (height - width / imgRatio) / 2
+            };
+          }
+          imageCache.set(slide.image, dims);
         }
-        targetCtx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+        
+        // Use integer coordinates for better performance
+        const {drawX, drawY, drawWidth, drawHeight} = dims;
+        targetCtx.drawImage(img, 
+          Math.round(drawX), Math.round(drawY), 
+          Math.round(drawWidth), Math.round(drawHeight)
+        );
       } else if (slide.imagePosition === "full") {
         // Full width image
         const imgHeight = (width * img.height) / img.width;
@@ -278,7 +291,13 @@ function draw() {
 
 const slideImages = {};
 
+function clearImageCache() {
+  imageCache.clear();
+}
+
 async function launch() {
+  // Handle window resize
+  window.addEventListener('resize', clearImageCache);
   // Load the default deck
   try {
     const deckModule = await import("../decks/default/slides.js");
