@@ -178,8 +178,8 @@ function draw() {
   }
 
   // During transition
-  const fromSlide = transitionDirection > 0 ? currentSlide - 1 : currentSlide;
-  const toSlide = transitionDirection > 0 ? currentSlide : currentSlide - 1;
+  const fromSlide = currentSlide - transitionDirection;
+  const toSlide = currentSlide;
 
   if (
     fromSlide >= 0 &&
