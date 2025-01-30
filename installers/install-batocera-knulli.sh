@@ -98,12 +98,13 @@ if my_distro_check; then
   cd ~/slidegame-main
   
   my_echo "=> Deleting existing slidegame game from /userdata/roms/jsgames"
-  rm -rf /userdata/roms/jsgames/$dir
+  rm -rf /userdata/roms/jsgames/slidegame
 
   
   cd ~
-  mv slidegame-main/* /userdata/roms/jsgames/
-  rm -r slidegame-main
+  mkdir /userdata/roms/jsgames/slidegame
+  mv slidegame-main/* /userdata/roms/jsgames/slidegame
+  rm -r ~/slidegame-main
 
   cd /userdata/roms/jsgames/slidegame
   # we don't need this but some will
