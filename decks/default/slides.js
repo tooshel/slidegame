@@ -13,18 +13,12 @@ export const slides = [
     },
   },
   {
-    title: "JS Game Launcher 101! 🚀",
+    title: "🚀 JS Game Launcher 101! 🚀",
     bullets: [
       "👋 I'm Luis.",
       "You can find with @monteslu in most places (Bluesky, Discord, etc)",
-      "This is me 10 years ago",
+      "Fill in more here",
     ],
-    textStyle: {
-      titleColor: "#ffffff",
-      bulletColor: "#ffffff",
-      titleShadow: "2px 2px 4px rgba(0,0,0,0.5)",
-      bulletShadow: "2px 2px 4px rgba(0,0,0,0.5)",
-    },
   },
 
   {
