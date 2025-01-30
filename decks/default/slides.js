@@ -1,6 +1,18 @@
 // Default presentation deck
 export const slides = [
   {
+    title: "HalfStack Phoenix 2025! 🚀",
+    bullets: [],
+    image: "images/halfstack-logo.png",
+    imagePosition: "full",
+    textStyle: {
+      titleColor: "#ffffff",
+      bulletColor: "#ffffff",
+      titleShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+      bulletShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+    },
+  },
+  {
     title: "JS Game Launcher 101! 🚀",
     bullets: [
       "👋 I'm Luis.",
@@ -162,6 +174,12 @@ export const slides = [
       "localStorage SHIM",
       "websocket SHIM",
     ],
+  },
+  {
+    title: "AI Games",
+    bullets: [],
+    image: "images/ai-games.png",
+    imagePosition: "full",
   },
   {
     title: "Thanks!",
