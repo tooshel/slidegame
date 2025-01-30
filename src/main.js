@@ -19,7 +19,7 @@ const slides = [
     title: "JS Game Launcher 101!",
     bullets: [
       "I'm Luis. I work alone. No one helps me. This is a really long bullet point that should wrap nicely around the image without overlapping.",
-      "Broooolyn so slow",
+      "Broooolyn is awesome! So grateful for his work!",
       "You better applaud me",
       "Listen closely",
       "Don't be a jerk",
@@ -143,11 +143,11 @@ function renderSlide(slide, targetCtx) {
         // Full width image
         const imgHeight = (width * img.height) / img.width;
         targetCtx.drawImage(img, 0, height * 0.2, width, imgHeight);
-        
+
         // Move text below image
         contentStartX = styles.bullets.marginLeft;
-        contentWidth = width - (styles.bullets.marginLeft * 2);
-        styles.bullets.marginTop = height * 0.2 + imgHeight + (height * 0.05);
+        contentWidth = width - styles.bullets.marginLeft * 2;
+        styles.bullets.marginTop = height * 0.2 + imgHeight + height * 0.05;
       } else {
         const imgWidth = width * 0.4;
         const imgHeight = (imgWidth * img.height) / img.width;
@@ -173,27 +173,27 @@ function renderSlide(slide, targetCtx) {
   let currentY = styles.bullets.marginTop;
 
   slide.bullets.forEach((bullet, index) => {
-    const words = bullet.split(' ');
-    let line = '• ';
+    const words = bullet.split(" ");
+    let line = "• ";
     let y = currentY;
 
     for (let word of words) {
-      const testLine = line + word + ' ';
+      const testLine = line + word + " ";
       const metrics = targetCtx.measureText(testLine);
-      
+
       if (metrics.width > contentWidth) {
         // Draw current line and start new one
         targetCtx.fillText(line, contentStartX, y);
-        line = '  ' + word + ' '; // Indent continuation lines
+        line = "  " + word + " "; // Indent continuation lines
         y += styles.bullets.fontSize * 0.8; // Tighter line spacing for wrapped text
       } else {
         line = testLine;
       }
     }
     targetCtx.fillText(line, contentStartX, y);
-    
+
     // Update starting Y position for next bullet, adding extra space for wrapped lines
-    currentY = y + (styles.bullets.fontSize * styles.bullets.lineHeight);
+    currentY = y + styles.bullets.fontSize * styles.bullets.lineHeight;
   });
 
   // Reset marginTop for next slide
@@ -224,9 +224,10 @@ function draw() {
     ctx.save();
 
     // Calculate transition position based on direction
-    const transX = transitionDirection > 0 
-      ? width * (1 - transitionProgress)  // Right transition
-      : width * transitionProgress;       // Left transition
+    const transX =
+      transitionDirection > 0
+        ? width * (1 - transitionProgress) // Right transition
+        : width * transitionProgress; // Left transition
 
     // Create a clipping region for the first slide
     ctx.beginPath();
