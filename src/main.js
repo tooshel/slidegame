@@ -291,7 +291,7 @@ function drawLoadingScreen() {
   ctx.fillRect(0, 0, width, height);
 
   ctx.fillStyle = "#ffffff";
-  ctx.font = `${height * 0.05}px Arial`;
+  ctx.font = `${height * 0.05}px Roboto`;
   ctx.textAlign = "center";
   ctx.fillText("Loading...", width / 2, height / 2);
 }
@@ -318,9 +318,17 @@ async function launch() {
     const loadedOrbitronFont = await orbitronFont.load();
     document.fonts.add(loadedOrbitronFont);
 
+    // Load Roboto font
+    const robotoFont = new FontFace(
+      "Roboto",
+      "url(fonts/Roboto-Regular.ttf)"
+    );
+    const loadedRobotoFont = await robotoFont.load();
+    document.fonts.add(loadedRobotoFont);
+
     // Update styles to use font fallback system
     styles.title.font = "Orbitron, NotoEmoji";
-    styles.bullets.font = "Arial, NotoEmoji";
+    styles.bullets.font = "Roboto, NotoEmoji";
   } catch (e) {
     console.error("Failed to load font:", e);
   }
