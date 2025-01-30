@@ -279,13 +279,12 @@ function draw() {
 const slideImages = {};
 
 async function launch() {
-  // Load the deck
-  const deckName = new URLSearchParams(window.location.search).get('deck') || 'default';
+  // Load the default deck
   try {
-    const deckModule = await import(`../decks/${deckName}/slides.js`);
+    const deckModule = await import('../decks/default/slides.js');
     slides = deckModule.slides;
   } catch (e) {
-    console.error(`Failed to load deck "${deckName}":`, e);
+    console.error('Failed to load default deck:', e);
     return;
   }
 
