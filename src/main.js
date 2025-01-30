@@ -5,6 +5,7 @@ const ctx = canvas.getContext("2d");
 
 const { width, height } = canvas;
 let lastTime;
+let isLoading = true;
 let currentSlide = 0;
 let canNavigate = true;
 let transitionProgress = 0;
@@ -16,42 +17,42 @@ const PIXEL_SIZE = 16; // Larger pixels = less work
 // Slide configuration
 const slides = [
   {
-    title: "JS Game Launcher 101!",
+    title: "JS Game Launcher 101! 🚀",
     bullets: [
-      "I'm Luis. I work alone. No one helps me. This is a really long bullet point that should wrap nicely around the image without overlapping.",
-      "Broooolyn is awesome! So grateful for his work!",
-      "You better applaud me",
-      "Listen closely",
-      "Don't be a jerk",
+      "👋 I'm Luis. I work alone. No one helps me. This is a really long bullet point that should wrap nicely around the image without overlapping.",
+      "🌟 Broooolyn is awesome! So grateful for his work!",
+      "👏 You better applaud me",
+      "👂 Listen closely",
+      "😇 Don't be a jerk",
     ],
     image: "images/luis.png",
     imagePosition: "right", // can be "left", "right", or "full"
   },
   {
-    title: "One day, I setup a new console",
+    title: "One day, I setup a new console 🎮",
     bullets: [
-      "It was cool playing old games!",
-      "But I wanted more",
-      "I want MY OWN GAMES ON THIS!",
-      "WEB ONLY FOR ME",
+      "🕹️ It was cool playing old games!",
+      "✨ But I wanted more",
+      "🎯 I want MY OWN GAMES ON THIS!",
+      "🌐 WEB ONLY FOR ME",
     ],
   },
   {
-    title: "I will install Chrome on this thing!",
+    title: "I will install Chrome on this thing! 🌐",
     bullets: [
-      "apt? . . . NO",
-      "curl . . yes!",
-      "nvm . . yes!",
-      "npm . . . yest!",
+      "❌ apt? . . . NO",
+      "✅ curl . . yes!",
+      "✅ nvm . . yes!",
+      "✅ npm . . . yes!",
     ],
   },
   {
-    title: "The web is cobbled",
-    bullets: ["Skia", "V8", "Webkit", "Blink", "Gecko", "Edge"],
+    title: "The web is cobbled 🏗️",
+    bullets: ["🎨 Skia", "⚡ V8", "🕸️ Webkit", "💫 Blink", "🦊 Gecko", "🌐 Edge"],
   },
   {
-    title: "I can cobble shit together too!",
-    bullets: ["Skia", "Canvas", "Gamepad API", "Sounds"],
+    title: "I can cobble stuff together too! 🛠️",
+    bullets: ["🎨 Skia", "🖼️ Canvas", "🎮 Gamepad API", "🔊 Sounds"],
   },
   {
     title: "Example Slide",
@@ -271,7 +272,33 @@ function draw() {
 
 const slideImages = {};
 
+function drawLoadingScreen() {
+  ctx.fillStyle = styles.background;
+  ctx.fillRect(0, 0, width, height);
+  
+  ctx.fillStyle = "#ffffff";
+  ctx.font = `${height * 0.05}px Arial`;
+  ctx.textAlign = "center";
+  ctx.fillText("Loading...", width / 2, height / 2);
+}
+
 async function launch() {
+  // Start with loading screen
+  drawLoadingScreen();
+
+  // Load font
+  try {
+    const emojiFont = new FontFace('NotoEmoji', 'url(fonts/NotoColorEmoji.ttf)');
+    const loadedFont = await emojiFont.load();
+    document.fonts.add(loadedFont);
+    
+    // Update styles to use new font
+    styles.title.font = 'NotoEmoji';
+    styles.bullets.font = 'NotoEmoji';
+  } catch (e) {
+    console.error('Failed to load font:', e);
+  }
+
   // Load all slide images
   for (const slide of slides) {
     if (slide.image) {
@@ -283,13 +310,19 @@ async function launch() {
     }
   }
 
+  // Everything is loaded
+  isLoading = false;
   lastTime = performance.now();
   gameLoop();
 }
 
 function gameLoop() {
-  update();
-  draw();
+  if (isLoading) {
+    drawLoadingScreen();
+  } else {
+    update();
+    draw();
+  }
   requestAnimationFrame(gameLoop);
 }
 
