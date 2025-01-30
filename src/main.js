@@ -170,11 +170,12 @@ function renderSlide(slide, targetCtx) {
   targetCtx.textAlign = "left";
   targetCtx.fillStyle = styles.bullets.color;
 
+  let currentY = styles.bullets.marginTop;
+
   slide.bullets.forEach((bullet, index) => {
     const words = bullet.split(' ');
     let line = '• ';
-    let y = styles.bullets.marginTop + 
-            (index * styles.bullets.fontSize * styles.bullets.lineHeight);
+    let y = currentY;
 
     for (let word of words) {
       const testLine = line + word + ' ';
@@ -190,6 +191,9 @@ function renderSlide(slide, targetCtx) {
       }
     }
     targetCtx.fillText(line, contentStartX, y);
+    
+    // Update starting Y position for next bullet, adding extra space for wrapped lines
+    currentY = y + (styles.bullets.fontSize * styles.bullets.lineHeight);
   });
 
   // Reset marginTop for next slide
