@@ -23,8 +23,17 @@ let canNavigate = true;
 let transitionProgress = 0;
 let isTransitioning = false;
 let transitionDirection = 1; // 1 for right, -1 for left
-const TRANSITION_DURATION = 300; // Complete transition in 300ms
-const PIXEL_SIZE = 16; // Larger pixels = less work
+// Performance settings
+const settings = {
+  transitions: false, // Disable transitions by default for better performance
+  transitionDuration: 300,
+  pixelSize: 16,
+  throttleFPS: true, // Limit FPS for better performance
+  targetFPS: 30
+};
+
+let lastFrameTime = 0;
+const frameInterval = 1000 / settings.targetFPS;
 
 let slides = [];
 
@@ -49,10 +58,20 @@ const styles = {
 
 function update() {
   const currentTime = performance.now();
+  
+  // Throttle FPS if enabled
+  if (settings.throttleFPS) {
+    const elapsed = currentTime - lastFrameTime;
+    if (elapsed < frameInterval) {
+      return;
+    }
+    lastFrameTime = currentTime;
+  }
+  
   const deltaTime = currentTime - lastTime;
   lastTime = currentTime;
 
-  if (isTransitioning) {
+  if (settings.transitions && isTransitioning) {
     transitionProgress += deltaTime / TRANSITION_DURATION;
     if (transitionProgress >= 1) {
       isTransitioning = false;
@@ -67,7 +86,7 @@ function update() {
     if (p1.DPAD_RIGHT.pressed) {
       if (currentSlide < slides.length - 1) {
         transitionDirection = 1;
-        isTransitioning = true;
+        isTransitioning = settings.transitions;
         transitionProgress = 0;
         currentSlide++;
         canNavigate = false;
@@ -75,7 +94,7 @@ function update() {
     } else if (p1.DPAD_LEFT.pressed) {
       if (currentSlide > 0) {
         transitionDirection = -1;
-        isTransitioning = true;
+        isTransitioning = settings.transitions;
         transitionProgress = 0;
         currentSlide--;
         canNavigate = false;
@@ -239,7 +258,7 @@ function draw() {
   ctx.fillStyle = styles.background;
   ctx.fillRect(0, 0, width, height);
 
-  if (!isTransitioning) {
+  if (!settings.transitions || !isTransitioning) {
     renderSlide(slides[currentSlide], ctx);
     return;
   }
