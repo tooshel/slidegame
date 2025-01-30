@@ -132,13 +132,11 @@ function renderSlide(slide, targetCtx) {
             offscreenCtx.drawImage(img, 0, Math.round(drawY), width, Math.round(drawHeight));
           }
           
-          // Cache the scaled image
-          const scaledImg = new Image();
-          scaledImg.src = offscreenCanvas.toDataURL();
-          imageCache.set(`scaled_${slide.image}`, scaledImg);
-          
-          // Draw the scaled image
+          // Draw the scaled image directly from offscreen canvas
           targetCtx.drawImage(offscreenCanvas, 0, 0);
+          
+          // Cache the offscreen canvas itself
+          imageCache.set(`scaled_${slide.image}`, offscreenCanvas);
         }
       } else if (slide.imagePosition === "full") {
         // Full width image
