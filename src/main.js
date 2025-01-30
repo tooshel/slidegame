@@ -88,6 +88,10 @@ function update() {
   }
 }
 
+// Create an offscreen canvas for image scaling
+const offscreenCanvas = document.createElement('canvas');
+const offscreenCtx = offscreenCanvas.getContext('2d', { alpha: false });
+
 function renderSlide(slide, targetCtx) {
   // Clear and set background
   targetCtx.fillStyle = styles.background;
@@ -104,37 +108,38 @@ function renderSlide(slide, targetCtx) {
     const img = slideImages[slide.image];
     if (img) {
       if (slide.imagePosition === "fullscreen") {
-        // Use cached dimensions if available
-        let dims = imageCache.get(slide.image);
-        if (!dims) {
-          // Calculate scaling to maintain aspect ratio while filling screen
+        // Use cached scaled image if available
+        const cachedImg = imageCache.get(`scaled_${slide.image}`);
+        if (cachedImg) {
+          targetCtx.drawImage(cachedImg, 0, 0);
+        } else {
+          // Scale image once and cache it
           const imgRatio = img.width / img.height;
           const screenRatio = width / height;
           
+          offscreenCanvas.width = width;
+          offscreenCanvas.height = height;
+          
           if (imgRatio > screenRatio) {
-            dims = {
-              drawHeight: height,
-              drawWidth: height * imgRatio,
-              drawY: 0,
-              drawX: (width - height * imgRatio) / 2
-            };
+            const drawHeight = height;
+            const drawWidth = height * imgRatio;
+            const drawX = (width - drawHeight * imgRatio) / 2;
+            offscreenCtx.drawImage(img, Math.round(drawX), 0, Math.round(drawWidth), height);
           } else {
-            dims = {
-              drawWidth: width,
-              drawHeight: width / imgRatio,
-              drawX: 0,
-              drawY: (height - width / imgRatio) / 2
-            };
+            const drawWidth = width;
+            const drawHeight = width / imgRatio;
+            const drawY = (height - width / imgRatio) / 2;
+            offscreenCtx.drawImage(img, 0, Math.round(drawY), width, Math.round(drawHeight));
           }
-          imageCache.set(slide.image, dims);
+          
+          // Cache the scaled image
+          const scaledImg = new Image();
+          scaledImg.src = offscreenCanvas.toDataURL();
+          imageCache.set(`scaled_${slide.image}`, scaledImg);
+          
+          // Draw the scaled image
+          targetCtx.drawImage(offscreenCanvas, 0, 0);
         }
-        
-        // Use integer coordinates for better performance
-        const {drawX, drawY, drawWidth, drawHeight} = dims;
-        targetCtx.drawImage(img, 
-          Math.round(drawX), Math.round(drawY), 
-          Math.round(drawWidth), Math.round(drawHeight)
-        );
       } else if (slide.imagePosition === "full") {
         // Full width image
         const imgHeight = (width * img.height) / img.width;
