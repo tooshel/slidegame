@@ -190,9 +190,19 @@ function draw() {
     // Save the current context state
     ctx.save();
 
+    // Calculate transition position based on direction
+    const transX = transitionDirection > 0 
+      ? width * (1 - transitionProgress)  // Right transition
+      : width * transitionProgress;       // Left transition
+
     // Create a clipping region for the first slide
     ctx.beginPath();
-    ctx.rect(0, 0, width * (1 - transitionProgress), height);
+    ctx.rect(
+      transitionDirection > 0 ? 0 : transX,
+      0,
+      transitionDirection > 0 ? transX : width - transX,
+      height
+    );
     ctx.clip();
 
     // Render first slide
@@ -203,9 +213,9 @@ function draw() {
     ctx.save();
     ctx.beginPath();
     ctx.rect(
-      width * (1 - transitionProgress),
+      transitionDirection > 0 ? transX : 0,
       0,
-      width * transitionProgress,
+      transitionDirection > 0 ? width - transX : transX,
       height
     );
     ctx.clip();
@@ -217,7 +227,7 @@ function draw() {
     ctx.restore();
 
     // Draw pixelated transition line
-    const lineX = width * (1 - transitionProgress);
+    const lineX = transX;
     for (let y = 0; y < height; y += PIXEL_SIZE) {
       ctx.fillStyle = y % (PIXEL_SIZE * 2) === 0 ? "#fff" : "#000";
       ctx.fillRect(lineX - 2, y, 4, PIXEL_SIZE);
