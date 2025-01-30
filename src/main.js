@@ -5,7 +5,7 @@ import {
   drawLoadingScreen,
 } from "./utils.js";
 
-import packageJson from "../package.json";
+import packageJson from "../package.json" with { type: "json" };
 
 const VERSION = packageJson.version;
 
