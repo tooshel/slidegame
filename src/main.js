@@ -36,6 +36,8 @@ const slides = [
       "🎯 I want MY OWN GAMES ON THIS!",
       "🌐 WEB ONLY FOR ME",
     ],
+    image: "images/welcome.png",
+    imagePosition: "full", // can be "left", "right", or "full"
   },
   {
     title: "I will install Chrome on this thing! 🌐",
@@ -48,7 +50,14 @@ const slides = [
   },
   {
     title: "The web is cobbled 🏗️",
-    bullets: ["🎨 Skia", "⚡ V8", "🕸️ Webkit", "💫 Blink", "🦊 Gecko", "🌐 Edge"],
+    bullets: [
+      "🎨 Skia",
+      "⚡ V8",
+      "🕸️ Webkit",
+      "💫 Blink",
+      "🦊 Gecko",
+      "🌐 Edge",
+    ],
   },
   {
     title: "I can cobble stuff together too! 🛠️",
@@ -279,7 +288,7 @@ const slideImages = {};
 function drawLoadingScreen() {
   ctx.fillStyle = styles.background;
   ctx.fillRect(0, 0, width, height);
-  
+
   ctx.fillStyle = "#ffffff";
   ctx.font = `${height * 0.05}px Arial`;
   ctx.textAlign = "center";
@@ -292,15 +301,18 @@ async function launch() {
 
   // Load font
   try {
-    const emojiFont = new FontFace('NotoEmoji', 'url(fonts/NotoColorEmoji.ttf)');
+    const emojiFont = new FontFace(
+      "NotoEmoji",
+      "url(fonts/NotoColorEmoji.ttf)"
+    );
     const loadedFont = await emojiFont.load();
     document.fonts.add(loadedFont);
-    
+
     // Update styles to use font fallback system
-    styles.title.font = 'Arial, NotoEmoji';
-    styles.bullets.font = 'Arial, NotoEmoji';
+    styles.title.font = "Arial, NotoEmoji";
+    styles.bullets.font = "Arial, NotoEmoji";
   } catch (e) {
-    console.error('Failed to load font:', e);
+    console.error("Failed to load font:", e);
   }
 
   // Load all slide images
