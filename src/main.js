@@ -283,32 +283,33 @@ function renderSlide(slide, targetCtx) {
 
     let currentY = styles.bullets.marginTop;
 
-  slide.bullets.forEach((bullet, index) => {
-    const words = bullet.split(" ");
-    let line = "• ";
-    let y = currentY;
+    slide.bullets.forEach((bullet, index) => {
+      const words = bullet.split(" ");
+      let line = "• ";
+      let y = currentY;
 
-    for (let word of words) {
-      const testLine = line + word + " ";
-      const metrics = targetCtx.measureText(testLine);
+      for (let word of words) {
+        const testLine = line + word + " ";
+        const metrics = targetCtx.measureText(testLine);
 
-      if (metrics.width > contentWidth) {
-        // Draw current line and start new one
-        targetCtx.fillText(line, contentStartX, y);
-        line = "  " + word + " "; // Indent continuation lines
-        y += styles.bullets.fontSize * 1.2; // More comfortable line spacing for wrapped text
-      } else {
-        line = testLine;
+        if (metrics.width > contentWidth) {
+          // Draw current line and start new one
+          targetCtx.fillText(line, contentStartX, y);
+          line = "  " + word + " "; // Indent continuation lines
+          y += styles.bullets.fontSize * 1.2; // More comfortable line spacing for wrapped text
+        } else {
+          line = testLine;
+        }
       }
-    }
-    targetCtx.fillText(line, contentStartX, y);
+      targetCtx.fillText(line, contentStartX, y);
 
-    // Update starting Y position for next bullet, adding extra space for wrapped lines
-    currentY = y + styles.bullets.fontSize * styles.bullets.lineHeight;
-  });
+      // Update starting Y position for next bullet, adding extra space for wrapped lines
+      currentY = y + styles.bullets.fontSize * styles.bullets.lineHeight;
+    });
 
-  // Reset marginTop for next slide
-  styles.bullets.marginTop = height * 0.2;
+    // Reset marginTop for next slide
+    styles.bullets.marginTop = height * 0.2;
+  }
 }
 
 function draw() {
