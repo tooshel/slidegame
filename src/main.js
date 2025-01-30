@@ -128,7 +128,9 @@ function renderSlide(slide, targetCtx) {
 
   // Draw title
   targetCtx.fillStyle = styles.title.color;
-  targetCtx.font = `${styles.title.fontSize}px ${styles.title.font}`;
+  // Use a larger size for emoji font to match text
+  const titleFontSize = styles.title.fontSize;
+  targetCtx.font = `${titleFontSize}px ${styles.title.font}`;
   targetCtx.textAlign = "center";
   targetCtx.fillText(slide.title, width / 2, styles.title.marginTop);
 
@@ -167,7 +169,9 @@ function renderSlide(slide, targetCtx) {
   }
 
   // Draw bullets with word wrap
-  targetCtx.font = `${styles.bullets.fontSize}px ${styles.title.font}`;
+  // Use a larger size for emoji font to match text
+  const bulletFontSize = styles.bullets.fontSize;
+  targetCtx.font = `${bulletFontSize}px ${styles.bullets.font}`;
   targetCtx.textAlign = "left";
   targetCtx.fillStyle = styles.bullets.color;
 
@@ -292,9 +296,9 @@ async function launch() {
     const loadedFont = await emojiFont.load();
     document.fonts.add(loadedFont);
     
-    // Update styles to use new font
-    styles.title.font = 'NotoEmoji';
-    styles.bullets.font = 'NotoEmoji';
+    // Update styles to use font fallback system
+    styles.title.font = 'Arial, NotoEmoji';
+    styles.bullets.font = 'Arial, NotoEmoji';
   } catch (e) {
     console.error('Failed to load font:', e);
   }
