@@ -10,14 +10,14 @@ const ctx = canvas.getContext("2d");
 canvas.height = 720;
 canvas.width = 1280;
 const { width, height } = canvas;
-let lastTime;
+let lastTime = performance.now();
 let isLoading = true;
 let currentSlide = 0;
 let canNavigate = true;
 let transitionProgress = 0;
 let isTransitioning = false;
 let transitionDirection = 1; // 1 for right, -1 for left
-const TRANSITION_SPEED = 0.015; // 5x faster transition
+const TRANSITION_DURATION = 300; // Complete transition in 300ms
 const PIXEL_SIZE = 16; // Larger pixels = less work
 
 // Slide configuration
@@ -141,8 +141,12 @@ const styles = {
 };
 
 function update() {
+  const currentTime = performance.now();
+  const deltaTime = currentTime - lastTime;
+  lastTime = currentTime;
+
   if (isTransitioning) {
-    transitionProgress += TRANSITION_SPEED;
+    transitionProgress += deltaTime / TRANSITION_DURATION;
     if (transitionProgress >= 1) {
       isTransitioning = false;
       transitionProgress = 0;
