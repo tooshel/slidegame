@@ -8,7 +8,31 @@ export const slides = [
       "This is me 10 years ago",
     ],
     image: "images/luis.png",
-    imagePosition: "right",
+    imagePosition: "right", //or left or fullscreen or full
+    textStyle: {
+      titleColor: "#ffffff",
+      bulletColor: "#ffffff",
+      titleShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+      bulletShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+    },
+  },
+  {
+    title: "Game Loop 🚀",
+    bullets: [],
+    image: "images/gameloop.png",
+    imagePosition: "full",
+    textStyle: {
+      titleColor: "#ffffff",
+      bulletColor: "#ffffff",
+      titleShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+      bulletShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+    },
+  },
+  {
+    title: "Loop functions 🚀",
+    bullets: [],
+    image: "images/loopfunctions.png",
+    imagePosition: "full",
     textStyle: {
       titleColor: "#ffffff",
       bulletColor: "#ffffff",
