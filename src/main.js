@@ -2,7 +2,8 @@ import { loadImage, getInput } from "./utils.js";
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-
+canvas.height = 720;
+canvas.width = 1280;
 const { width, height } = canvas;
 let lastTime;
 let isLoading = true;
