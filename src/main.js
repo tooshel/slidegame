@@ -301,15 +301,24 @@ async function launch() {
 
   // Load font
   try {
+    // Load emoji font
     const emojiFont = new FontFace(
       "NotoEmoji",
       "url(fonts/NotoColorEmoji.ttf)"
     );
-    const loadedFont = await emojiFont.load();
-    document.fonts.add(loadedFont);
+    const loadedEmojiFont = await emojiFont.load();
+    document.fonts.add(loadedEmojiFont);
+
+    // Load Orbitron font
+    const orbitronFont = new FontFace(
+      "Orbitron",
+      "url(fonts/Orbitron-VariableFont_wght.ttf)"
+    );
+    const loadedOrbitronFont = await orbitronFont.load();
+    document.fonts.add(loadedOrbitronFont);
 
     // Update styles to use font fallback system
-    styles.title.font = "Arial, NotoEmoji";
+    styles.title.font = "Orbitron, NotoEmoji";
     styles.bullets.font = "Arial, NotoEmoji";
   } catch (e) {
     console.error("Failed to load font:", e);
