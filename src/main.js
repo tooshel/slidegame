@@ -1,4 +1,4 @@
-import { loadImage, getInput } from "./utils.js";
+import { loadImage, getInput, createReourceLoader, drawLoadingScreen } from "./utils.js";
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
