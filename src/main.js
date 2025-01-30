@@ -69,8 +69,8 @@ const slides = [
     bullets: ["Bullet point 1", "Bullet point 2", "Bullet point 3"],
   },
   {
-    title: "Example Slide",
-    bullets: ["Bullet point 1", "Bullet point 2", "Bullet point 3"],
+    title: "Thanks!",
+    bullets: ["Broooookln you are awesome!"],
   },
   // Add more slides here
 ];
@@ -319,10 +319,7 @@ async function launch() {
     document.fonts.add(loadedOrbitronFont);
 
     // Load Roboto font
-    const robotoFont = new FontFace(
-      "Roboto",
-      "url(fonts/Roboto-Regular.ttf)"
-    );
+    const robotoFont = new FontFace("Roboto", "url(fonts/Roboto-Regular.ttf)");
     const loadedRobotoFont = await robotoFont.load();
     document.fonts.add(loadedRobotoFont);
 
