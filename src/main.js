@@ -281,10 +281,10 @@ const slideImages = {};
 async function launch() {
   // Load the default deck
   try {
-    const deckModule = await import('../../decks/default/slides.js');
+    const deckModule = await import("../decks/default/slides.js");
     slides = deckModule.slides;
   } catch (e) {
-    console.error('Failed to load default deck:', e);
+    console.error("Failed to load default deck:", e);
     return;
   }
 
