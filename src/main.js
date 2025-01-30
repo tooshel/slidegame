@@ -151,11 +151,22 @@ function renderSlide(slide, targetCtx) {
             offscreenCtx.drawImage(img, 0, Math.round(drawY), width, Math.round(drawHeight));
           }
           
-          // Draw the scaled image directly from offscreen canvas
-          targetCtx.drawImage(offscreenCanvas, 0, 0);
+          // Create a new canvas for caching
+          const cacheCanvas = document.createElement('canvas');
+          cacheCanvas.width = width;
+          cacheCanvas.height = height;
+          const cacheCtx = cacheCanvas.getContext('2d', { alpha: false });
           
-          // Cache the offscreen canvas itself
-          imageCache.set(`scaled_${slide.image}`, offscreenCanvas);
+          // Disable image smoothing for better performance
+          cacheCtx.imageSmoothingEnabled = settings.useImageSmoothing;
+          cacheCtx.drawImage(offscreenCanvas, 0, 0);
+          
+          // Cache the canvas
+          imageCache.set(`scaled_${slide.image}`, cacheCanvas);
+          
+          // Draw to target
+          targetCtx.imageSmoothingEnabled = settings.useImageSmoothing;
+          targetCtx.drawImage(cacheCanvas, 0, 0);
         }
       } else if (slide.imagePosition === "full") {
         // Full width image
@@ -325,6 +336,11 @@ function draw() {
 const slideImages = {};
 
 function clearImageCache() {
+  // Remove old canvases from memory
+  imageCache.forEach((canvas) => {
+    canvas.width = 0;
+    canvas.height = 0;
+  });
   imageCache.clear();
 }
 
@@ -340,8 +356,10 @@ async function launch() {
     return;
   }
 
-  // Create resource loader
+  // Create resource loader with performance settings
   const loader = createReourceLoader();
+  ctx.imageSmoothingEnabled = settings.useImageSmoothing;
+  offscreenCtx.imageSmoothingEnabled = settings.useImageSmoothing;
 
   // Load fonts
   const fontPromises = [
