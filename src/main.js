@@ -5,8 +5,7 @@ import {
   drawLoadingScreen,
 } from "./utils.js";
 
-// Import version from package.json
-const VERSION = (await import('../package.json', { assert: { type: 'json' } })).default.version;
+import { VERSION } from './version.js';
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d", { alpha: false }); // Optimize for non-transparent canvas
