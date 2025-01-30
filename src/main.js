@@ -5,6 +5,7 @@ import {
   drawLoadingScreen,
 } from "./utils.js";
 
+// the "with" syntax has to stay since this isn't alwyas used with vite
 import packageJson from "../package.json" with { type: "json" };
 
 const VERSION = packageJson.version;
