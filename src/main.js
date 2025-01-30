@@ -18,14 +18,14 @@ const slides = [
   {
     title: "JS Game Launcher 101!",
     bullets: [
-      "I'm Luis. I work alone. No one helps me.",
+      "I'm Luis. I work alone. No one helps me. This is a really long bullet point that should wrap nicely around the image without overlapping.",
       "Broooolyn so slow",
       "You better applaud me",
       "Listen closely",
       "Don't be a jerk",
     ],
     image: "images/luis.png",
-    imagePosition: "right", // or "left"
+    imagePosition: "right", // can be "left", "right", or "full"
   },
   {
     title: "One day, I setup a new console",
@@ -139,32 +139,61 @@ function renderSlide(slide, targetCtx) {
   if (slide.image) {
     const img = slideImages[slide.image];
     if (img) {
-      const imgWidth = width * 0.4;
-      const imgHeight = (imgWidth * img.height) / img.width;
-      const imgY = height * 0.3;
-
-      if (slide.imagePosition === "left") {
-        targetCtx.drawImage(img, width * 0.05, imgY, imgWidth, imgHeight);
-        contentStartX = width * 0.5;
-        contentWidth = width * 0.45;
+      if (slide.imagePosition === "full") {
+        // Full width image
+        const imgHeight = (width * img.height) / img.width;
+        targetCtx.drawImage(img, 0, height * 0.2, width, imgHeight);
+        
+        // Move text below image
+        contentStartX = styles.bullets.marginLeft;
+        contentWidth = width - (styles.bullets.marginLeft * 2);
+        styles.bullets.marginTop = height * 0.2 + imgHeight + (height * 0.05);
       } else {
-        targetCtx.drawImage(img, width * 0.55, imgY, imgWidth, imgHeight);
-        contentWidth = width * 0.45;
+        const imgWidth = width * 0.4;
+        const imgHeight = (imgWidth * img.height) / img.width;
+        const imgY = height * 0.3;
+
+        if (slide.imagePosition === "left") {
+          targetCtx.drawImage(img, width * 0.05, imgY, imgWidth, imgHeight);
+          contentStartX = width * 0.5;
+          contentWidth = width * 0.45;
+        } else {
+          targetCtx.drawImage(img, width * 0.55, imgY, imgWidth, imgHeight);
+          contentWidth = width * 0.45;
+        }
       }
     }
   }
 
-  // Draw bullets
+  // Draw bullets with word wrap
   targetCtx.font = `${styles.bullets.fontSize}px ${styles.title.font}`;
   targetCtx.textAlign = "left";
   targetCtx.fillStyle = styles.bullets.color;
 
   slide.bullets.forEach((bullet, index) => {
-    const y =
-      styles.bullets.marginTop +
-      index * styles.bullets.fontSize * styles.bullets.lineHeight;
-    targetCtx.fillText(`• ${bullet}`, contentStartX, y);
+    const words = bullet.split(' ');
+    let line = '• ';
+    let y = styles.bullets.marginTop + 
+            (index * styles.bullets.fontSize * styles.bullets.lineHeight);
+
+    for (let word of words) {
+      const testLine = line + word + ' ';
+      const metrics = targetCtx.measureText(testLine);
+      
+      if (metrics.width > contentWidth) {
+        // Draw current line and start new one
+        targetCtx.fillText(line, contentStartX, y);
+        line = '  ' + word + ' '; // Indent continuation lines
+        y += styles.bullets.fontSize * 0.8; // Tighter line spacing for wrapped text
+      } else {
+        line = testLine;
+      }
+    }
+    targetCtx.fillText(line, contentStartX, y);
   });
+
+  // Reset marginTop for next slide
+  styles.bullets.marginTop = height * 0.2;
 }
 
 function draw() {
