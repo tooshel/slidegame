@@ -286,59 +286,52 @@ function draw() {
 
 const slideImages = {};
 
-function drawLoadingScreen() {
-  ctx.fillStyle = styles.background;
-  ctx.fillRect(0, 0, width, height);
-
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `${height * 0.05}px Roboto`;
-  ctx.textAlign = "center";
-  ctx.fillText("Loading...", width / 2, height / 2);
-}
-
 async function launch() {
-  // Start with loading screen
-  drawLoadingScreen();
+  // Create resource loader
+  const loader = createReourceLoader();
 
-  // Load font
-  try {
-    // Load emoji font
-    const emojiFont = new FontFace(
-      "NotoEmoji",
-      "url(fonts/NotoColorEmoji.ttf)"
-    );
-    const loadedEmojiFont = await emojiFont.load();
-    document.fonts.add(loadedEmojiFont);
+  // Load fonts
+  const fontPromises = [
+    new FontFace("NotoEmoji", "url(fonts/NotoColorEmoji.ttf)").load(),
+    new FontFace("Orbitron", "url(fonts/Orbitron-VariableFont_wght.ttf)").load(),
+    new FontFace("Roboto", "url(fonts/Roboto-Regular.ttf)").load()
+  ];
 
-    // Load Orbitron font
-    const orbitronFont = new FontFace(
-      "Orbitron",
-      "url(fonts/Orbitron-VariableFont_wght.ttf)"
-    );
-    const loadedOrbitronFont = await orbitronFont.load();
-    document.fonts.add(loadedOrbitronFont);
-
-    // Load Roboto font
-    const robotoFont = new FontFace("Roboto", "url(fonts/Roboto-Regular.ttf)");
-    const loadedRobotoFont = await robotoFont.load();
-    document.fonts.add(loadedRobotoFont);
-
-    // Update styles to use font fallback system
-    styles.title.font = "Orbitron, NotoEmoji";
-    styles.bullets.font = "Roboto, NotoEmoji";
-  } catch (e) {
-    console.error("Failed to load font:", e);
-  }
-
-  // Load all slide images
+  // Load images
   for (const slide of slides) {
     if (slide.image) {
-      try {
-        slideImages[slide.image] = await loadImage(slide.image);
-      } catch (e) {
-        console.error(`Failed to load image: ${slide.image}`);
-      }
+      loader.addImage(slide.image, slide.image);
     }
+  }
+
+  // Show loading progress
+  function renderLoading() {
+    if (!isLoading) return;
+    drawLoadingScreen(ctx, loader.getPercentComplete(), styles.background, "#ffffff");
+    requestAnimationFrame(renderLoading);
+  }
+  renderLoading();
+
+  // Wait for all resources
+  try {
+    const [loadedEmojiFont, loadedOrbitronFont, loadedRobotoFont] = await Promise.all([
+      ...fontPromises,
+      loader.load()
+    ]);
+
+    // Add fonts to document
+    document.fonts.add(loadedEmojiFont);
+    document.fonts.add(loadedOrbitronFont);
+    document.fonts.add(loadedRobotoFont);
+
+    // Update styles
+    styles.title.font = "Orbitron, NotoEmoji";
+    styles.bullets.font = "Roboto, NotoEmoji";
+
+    // Get loaded images
+    Object.assign(slideImages, loader.images);
+  } catch (e) {
+    console.error("Failed to load resources:", e);
   }
 
   // Everything is loaded
@@ -348,12 +341,8 @@ async function launch() {
 }
 
 function gameLoop() {
-  if (isLoading) {
-    drawLoadingScreen();
-  } else {
-    update();
-    draw();
-  }
+  update();
+  draw();
   requestAnimationFrame(gameLoop);
 }
 
