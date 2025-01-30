@@ -29,7 +29,8 @@ const settings = {
   transitionDuration: 300,
   pixelSize: 16,
   throttleFPS: true, // Limit FPS for better performance
-  targetFPS: 30
+  targetFPS: 30,
+  useImageSmoothing: false // Disable image smoothing for better performance
 };
 
 let lastFrameTime = 0;
