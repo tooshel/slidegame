@@ -200,7 +200,7 @@ function renderSlide(slide, targetCtx) {
         // Draw current line and start new one
         targetCtx.fillText(line, contentStartX, y);
         line = "  " + word + " "; // Indent continuation lines
-        y += styles.bullets.fontSize * 0.8; // Tighter line spacing for wrapped text
+        y += styles.bullets.fontSize * 1.2; // More comfortable line spacing for wrapped text
       } else {
         line = testLine;
       }
