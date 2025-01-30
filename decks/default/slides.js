@@ -7,8 +7,6 @@ export const slides = [
       "You can find with @monteslu in most places (Bluesky, Discord, etc)",
       "This is me 10 years ago",
     ],
-    image: "images/luis.png",
-    imagePosition: "right", //or left or fullscreen or full
     textStyle: {
       titleColor: "#ffffff",
       bulletColor: "#ffffff",
@@ -16,6 +14,33 @@ export const slides = [
       bulletShadow: "2px 2px 4px rgba(0,0,0,0.5)",
     },
   },
+
+  {
+    title: "Retro Gaming in 2024 🚀",
+    bullets: [],
+    image: "images/pi-controller-box.png",
+    imagePosition: "full",
+    textStyle: {
+      titleColor: "#ffffff",
+      bulletColor: "#ffffff",
+      titleShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+      bulletShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+    },
+  },
+
+  {
+    title: "ROMS! 🚀",
+    bullets: [],
+    image: "images/roms.png",
+    imagePosition: "full",
+    textStyle: {
+      titleColor: "#ffffff",
+      bulletColor: "#ffffff",
+      titleShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+      bulletShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+    },
+  },
+
   {
     title: "Game Loop 🚀",
     bullets: [],
