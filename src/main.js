@@ -92,8 +92,8 @@ function renderSlide(slide, targetCtx) {
   targetCtx.fillStyle = styles.background;
   targetCtx.fillRect(0, 0, width, height);
   
-  // Draw version number in bottom-left corner
-  targetCtx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+  // Draw version number in bottom-left corner with improved contrast
+  targetCtx.fillStyle = 'rgba(255, 255, 255, 0.7)';
   targetCtx.font = '16px Roboto';
   targetCtx.textAlign = 'left';
   targetCtx.fillText(`v${VERSION}`, 10, height - 10);
