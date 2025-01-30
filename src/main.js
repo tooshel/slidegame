@@ -16,7 +16,7 @@ const PIXEL_SIZE = 16; // Larger pixels = less work
 // Slide configuration
 const slides = [
   {
-    title: "Welcome to JS Game Launcher 101!",
+    title: "JS Game Launcher 101!",
     bullets: [
       "I'm Luis. I work alone. No one helps me.",
       "Broooolyn so slow",
