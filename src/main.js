@@ -1,4 +1,9 @@
-import { loadImage, getInput, createReourceLoader, drawLoadingScreen } from "./utils.js";
+import {
+  loadImage,
+  getInput,
+  createReourceLoader,
+  drawLoadingScreen,
+} from "./utils.js";
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
@@ -20,37 +25,45 @@ const slides = [
   {
     title: "JS Game Launcher 101! 🚀",
     bullets: [
-      "👋 I'm Luis. I work alone. No one helps me. This is a really long bullet point that should wrap nicely around the image without overlapping.",
-      "🌟 Broooolyn is awesome! So grateful for his work!",
-      "👏 You better applaud me",
-      "👂 Listen closely",
-      "😇 Don't be a jerk",
+      "👋 I'm Luis.",
+      "You can find with @monteslu in most places (Bluesky, Discord, etc)",
+      "This is me 10 years ago",
     ],
     image: "images/luis.png",
     imagePosition: "right", // can be "left", "right", or "full"
   },
   {
-    title: "One day, I setup a new console 🎮",
+    title: "Once upon a time . . .",
     bullets: [
+      "I setup a new retro gaming console 🎮 ",
+      "Common 'themes' in Emulation Station, Knulli, Batocera",
       "🕹️ It was cool playing old games!",
       "✨ But I wanted more",
       "🎯 I want MY OWN GAMES ON THIS!",
-      "🌐 WEB ONLY FOR ME",
+      "🌐 WEB FO LIFE!",
     ],
-    image: "images/welcome.png",
-    imagePosition: "full", // can be "left", "right", or "full"
   },
   {
     title: "I will install Chrome on this thing! 🌐",
     bullets: [
       "❌ apt? . . . NO",
-      "✅ curl . . yes!",
-      "✅ nvm . . yes!",
-      "✅ npm . . . yes!",
+      "❌ yum? . . . NO",
+      "✅ brute force! . . . yes!",
     ],
   },
   {
-    title: "The web is cobbled 🏗️",
+    title: "Wow, that's slow. What else can I do?",
+    bullets: [
+      "❌ Electron? Nope, too slow",
+      "❌ apt? . . . NO",
+      "❌ yum? . . . NO",
+      "✅ curl . . yes!",
+      "✅ nvm . . yes, eventually!",
+      "✅ npm/node . . . yes!",
+    ],
+  },
+  {
+    title: "The web is . . .  🏗️",
     bullets: [
       "🎨 Skia",
       "⚡ V8",
@@ -61,16 +74,49 @@ const slides = [
     ],
   },
   {
+    title: "But for gaming . . . what do I need?",
+    bullets: [
+      "JavasScript . . . of course, need a game loop!",
+      "canvas . . . for drawing!",
+      "audio . . . for sounds!",
+      "fullscreen!",
+      "gamepad API!",
+      "gestures!",
+    ],
+  },
+  {
     title: "I can cobble stuff together too! 🛠️",
     bullets: ["🎨 Skia", "🖼️ Canvas", "🎮 Gamepad API", "🔊 Sounds"],
   },
   {
-    title: "Example Slide",
-    bullets: ["Bullet point 1", "Bullet point 2", "Bullet point 3"],
+    title: "A**h*** about performance",
+    bullets: ["Can it run on an A53 (H700)?", "ambernic $50 device"],
+  },
+  {
+    title: "Age of discovery",
+    bullets: [
+      "DIY",
+      "libSDL2",
+      "skia canvas",
+      "automattic",
+      "pureimage",
+      "@napi-rs/canvas",
+    ],
+  },
+  {
+    title: "But the web! No new frameworks!",
+    bullets: [
+      "SHIM SHIM SHIM",
+      "var myimage = new Image, myImage.src = images/me.jpg",
+      "Web Audio SHIM",
+      "Fonts SHIM",
+      "localStorage SHIM",
+      "websocket SHIM",
+    ],
   },
   {
     title: "Thanks!",
-    bullets: ["Broooookln you are awesome!"],
+    bullets: ["🌟 Broooolyn is awesome! So grateful for his work!"],
   },
   // Add more slides here
 ];
@@ -293,8 +339,11 @@ async function launch() {
   // Load fonts
   const fontPromises = [
     new FontFace("NotoEmoji", "url(fonts/NotoColorEmoji.ttf)").load(),
-    new FontFace("Orbitron", "url(fonts/Orbitron-VariableFont_wght.ttf)").load(),
-    new FontFace("Roboto", "url(fonts/Roboto-Regular.ttf)").load()
+    new FontFace(
+      "Orbitron",
+      "url(fonts/Orbitron-VariableFont_wght.ttf)"
+    ).load(),
+    new FontFace("Roboto", "url(fonts/Roboto-Regular.ttf)").load(),
   ];
 
   // Load images
@@ -307,17 +356,20 @@ async function launch() {
   // Show loading progress
   function renderLoading() {
     if (!isLoading) return;
-    drawLoadingScreen(ctx, loader.getPercentComplete(), styles.background, "#ffffff");
+    drawLoadingScreen(
+      ctx,
+      loader.getPercentComplete(),
+      styles.background,
+      "#ffffff"
+    );
     requestAnimationFrame(renderLoading);
   }
   renderLoading();
 
   // Wait for all resources
   try {
-    const [loadedEmojiFont, loadedOrbitronFont, loadedRobotoFont] = await Promise.all([
-      ...fontPromises,
-      loader.load()
-    ]);
+    const [loadedEmojiFont, loadedOrbitronFont, loadedRobotoFont] =
+      await Promise.all([...fontPromises, loader.load()]);
 
     // Add fonts to document
     document.fonts.add(loadedEmojiFont);
