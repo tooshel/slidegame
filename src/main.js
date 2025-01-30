@@ -30,7 +30,13 @@ const slides = [
       "This is me 10 years ago",
     ],
     image: "images/luis.png",
-    imagePosition: "right", // can be "left", "right", or "full"
+    imagePosition: "right", // can be "left", "right", "full", or "fullscreen"
+    textStyle: {
+      titleColor: "#ffffff", // optional, overrides default
+      bulletColor: "#ffffff", // optional, overrides default
+      titleShadow: "2px 2px 4px rgba(0,0,0,0.5)", // optional
+      bulletShadow: "2px 2px 4px rgba(0,0,0,0.5)", // optional
+    }
   },
   {
     title: "Once upon a time . . .",
@@ -186,31 +192,34 @@ function renderSlide(slide, targetCtx) {
   targetCtx.fillStyle = styles.background;
   targetCtx.fillRect(0, 0, width, height);
 
-  // Draw title
-  targetCtx.fillStyle = styles.title.color;
-  // Use a larger size for emoji font to match text
-  const titleFontSize = styles.title.fontSize;
-  targetCtx.font = `${titleFontSize}px ${styles.title.font}`;
-  targetCtx.textAlign = "center";
-  targetCtx.fillText(slide.title, width / 2, styles.title.marginTop);
-
-  // Calculate content area
-  let contentStartX = styles.bullets.marginLeft;
-  let contentWidth = width - styles.bullets.marginLeft * 2;
-
   // Handle image if present
   if (slide.image) {
     const img = slideImages[slide.image];
     if (img) {
-      if (slide.imagePosition === "full") {
+      if (slide.imagePosition === "fullscreen") {
+        // Calculate scaling to maintain aspect ratio while filling screen
+        const imgRatio = img.width / img.height;
+        const screenRatio = width / height;
+        let drawWidth, drawHeight, drawX, drawY;
+
+        if (imgRatio > screenRatio) {
+          // Image is wider than screen ratio
+          drawHeight = height;
+          drawWidth = height * imgRatio;
+          drawY = 0;
+          drawX = (width - drawWidth) / 2;
+        } else {
+          // Image is taller than screen ratio
+          drawWidth = width;
+          drawHeight = width / imgRatio;
+          drawX = 0;
+          drawY = (height - drawHeight) / 2;
+        }
+        targetCtx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+      } else if (slide.imagePosition === "full") {
         // Full width image
         const imgHeight = (width * img.height) / img.width;
         targetCtx.drawImage(img, 0, height * 0.2, width, imgHeight);
-
-        // Move text below image
-        contentStartX = styles.bullets.marginLeft;
-        contentWidth = width - styles.bullets.marginLeft * 2;
-        styles.bullets.marginTop = height * 0.2 + imgHeight + height * 0.05;
       } else {
         const imgWidth = width * 0.4;
         const imgHeight = (imgWidth * img.height) / img.width;
@@ -218,24 +227,61 @@ function renderSlide(slide, targetCtx) {
 
         if (slide.imagePosition === "left") {
           targetCtx.drawImage(img, width * 0.05, imgY, imgWidth, imgHeight);
-          contentStartX = width * 0.5;
-          contentWidth = width * 0.45;
         } else {
           targetCtx.drawImage(img, width * 0.55, imgY, imgWidth, imgHeight);
-          contentWidth = width * 0.45;
         }
       }
     }
   }
 
-  // Draw bullets with word wrap
-  // Use a larger size for emoji font to match text
-  const bulletFontSize = styles.bullets.fontSize;
-  targetCtx.font = `${bulletFontSize}px ${styles.bullets.font}`;
-  targetCtx.textAlign = "left";
-  targetCtx.fillStyle = styles.bullets.color;
+  // Skip text rendering if title is empty and no bullets
+  if (!slide.title && (!slide.bullets || slide.bullets.length === 0)) {
+    return;
+  }
 
-  let currentY = styles.bullets.marginTop;
+  // Calculate content area
+  let contentStartX = styles.bullets.marginLeft;
+  let contentWidth = width - styles.bullets.marginLeft * 2;
+  if (slide.imagePosition === "left") {
+    contentStartX = width * 0.5;
+    contentWidth = width * 0.45;
+  } else if (slide.imagePosition === "right") {
+    contentWidth = width * 0.45;
+  }
+
+  // Draw title with optional shadow
+  if (slide.title) {
+    targetCtx.fillStyle = slide.textStyle?.titleColor || styles.title.color;
+    const titleFontSize = styles.title.fontSize;
+    targetCtx.font = `${titleFontSize}px ${styles.title.font}`;
+    targetCtx.textAlign = "center";
+    
+    if (slide.textStyle?.titleShadow) {
+      targetCtx.shadowColor = "rgba(0,0,0,0.5)";
+      targetCtx.shadowBlur = 4;
+      targetCtx.shadowOffsetX = 2;
+      targetCtx.shadowOffsetY = 2;
+    }
+    
+    targetCtx.fillText(slide.title, width / 2, styles.title.marginTop);
+    targetCtx.shadowColor = "transparent";
+  }
+
+  // Draw bullets with word wrap
+  if (slide.bullets && slide.bullets.length > 0) {
+    const bulletFontSize = styles.bullets.fontSize;
+    targetCtx.font = `${bulletFontSize}px ${styles.bullets.font}`;
+    targetCtx.textAlign = "left";
+    targetCtx.fillStyle = slide.textStyle?.bulletColor || styles.bullets.color;
+    
+    if (slide.textStyle?.bulletShadow) {
+      targetCtx.shadowColor = "rgba(0,0,0,0.5)";
+      targetCtx.shadowBlur = 4;
+      targetCtx.shadowOffsetX = 2;
+      targetCtx.shadowOffsetY = 2;
+    }
+
+    let currentY = styles.bullets.marginTop;
 
   slide.bullets.forEach((bullet, index) => {
     const words = bullet.split(" ");
