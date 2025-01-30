@@ -36,7 +36,23 @@ const slides = [
       bulletColor: "#ffffff", // optional, overrides default
       titleShadow: "2px 2px 4px rgba(0,0,0,0.5)", // optional
       bulletShadow: "2px 2px 4px rgba(0,0,0,0.5)", // optional
-    }
+    },
+  },
+  {
+    title: "JS Game Launcher 101! 🚀",
+    bullets: [
+      "👋 I'm Luis.",
+      "You can find with @monteslu in most places (Bluesky, Discord, etc)",
+      "This is me 10 years ago",
+    ],
+    image: "images/luis.png",
+    imagePosition: "fullscreen", // can be "left", "right", "full", or "fullscreen"
+    textStyle: {
+      titleColor: "#000000", // optional, overrides default
+      bulletColor: "#000000", // optional, overrides default
+      titleShadow: "2px 2px 4px rgba(0,0,0,0.5)", // optional
+      bulletShadow: "2px 2px 4px rgba(0,0,0,0.5)", // optional
+    },
   },
   {
     title: "Once upon a time . . .",
@@ -255,14 +271,14 @@ function renderSlide(slide, targetCtx) {
     const titleFontSize = styles.title.fontSize;
     targetCtx.font = `${titleFontSize}px ${styles.title.font}`;
     targetCtx.textAlign = "center";
-    
+
     if (slide.textStyle?.titleShadow) {
       targetCtx.shadowColor = "rgba(0,0,0,0.5)";
       targetCtx.shadowBlur = 4;
       targetCtx.shadowOffsetX = 2;
       targetCtx.shadowOffsetY = 2;
     }
-    
+
     targetCtx.fillText(slide.title, width / 2, styles.title.marginTop);
     targetCtx.shadowColor = "transparent";
   }
@@ -273,7 +289,7 @@ function renderSlide(slide, targetCtx) {
     targetCtx.font = `${bulletFontSize}px ${styles.bullets.font}`;
     targetCtx.textAlign = "left";
     targetCtx.fillStyle = slide.textStyle?.bulletColor || styles.bullets.color;
-    
+
     if (slide.textStyle?.bulletShadow) {
       targetCtx.shadowColor = "rgba(0,0,0,0.5)";
       targetCtx.shadowBlur = 4;
