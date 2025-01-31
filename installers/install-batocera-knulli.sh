@@ -1,13 +1,18 @@
 #!/usr/bin/env bash
 
 { # this ensures the entire script is downloaded #
+
+# Configuration variables
+GAME_NAME="slidegame"                                                    # Name of the game folder
+REPO_URL="https://github.com/tooshel/slidegame/archive/refs/heads/main.zip"  # URL to download the game
+INSTALL_PATH="/userdata/roms/jsgames"                                    # Where to install the game
+NODE_VERSION="22"                                                        # Node.js version to use
+RUN_NPM_INSTALL=false                                                    # Whether to run npm install
+NPM_INSTALL_FLAGS="--omit=dev"                                          # Flags for npm install command
+
 # this will exit the script if any error is encountered . . . 
 # . . . it usually also exits the ssh connection so not using this for now
 # set -e
-
-# Not sure why nvm has all these functions but I don't mind them
-
-GAME_NAME="slidegame"
 
 my_has() {
   type "$1" > /dev/null 2>&1
@@ -78,7 +83,7 @@ fi
 
 my_echo "=> Downloading the game . . . "
 source ~/.bash_profile
-curl -o mygame.zip -L https://github.com/tooshel/slidegame/archive/refs/heads/main.zip
+curl -o mygame.zip -L "$REPO_URL"
 unzip mygame.zip
 
 
@@ -94,21 +99,22 @@ if my_distro_check; then
   fi
 
   source ~/.bash_profile
-  nvm use 22
+  nvm use $NODE_VERSION
   cd ~/slidegame-main
   
-  my_echo "=> Deleting existing slidegame game from /userdata/roms/jsgames"
-  rm -rf /userdata/roms/jsgames/slidegame
+  my_echo "=> Deleting existing ${GAME_NAME} game from ${INSTALL_PATH}"
+  rm -rf "${INSTALL_PATH}/${GAME_NAME}"
 
-  
   cd ~
-  mkdir /userdata/roms/jsgames/slidegame
-  mv slidegame-main/* /userdata/roms/jsgames/slidegame
+  mkdir -p "${INSTALL_PATH}/${GAME_NAME}"
+  mv slidegame-main/* "${INSTALL_PATH}/${GAME_NAME}"
   rm -r ~/slidegame-main
 
-  cd /userdata/roms/jsgames/slidegame
-  # we don't need this but some will
-  # npm install --omit=dev
+  cd "${INSTALL_PATH}/${GAME_NAME}"
+  if [ "$RUN_NPM_INSTALL" = true ]; then
+    my_echo "=> Running npm install..."
+    npm install $NPM_INSTALL_FLAGS
+  fi
 
   my_echo "=> INSTALL SUCCESSFUL!"
   cd ~
