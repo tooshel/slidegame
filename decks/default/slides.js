@@ -180,7 +180,7 @@ export const slides = [
   //   ],
   // },
   {
-    title: "But the web! No new frameworks!",
+    title: "Web APIs! No new frameworks!",
     bullets: [
       "🖼️ const img = new Image; img.src = 'images/me.jpg'; shim",
       "🌐 Fetch / XMLHttpRequest shim",
