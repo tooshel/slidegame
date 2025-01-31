@@ -125,13 +125,7 @@ export const slides = [
   {
     title: "Sr. Prinicipal Architect Lead :",
     bullets: [
-      "🫡 We do NOT do these things because they are EASY",
-    ],
-  },
-  {
-    title: "Sr. Prinicipal Architect Lead :",
-    bullets: [
-      "... we do these things because we THOUGHT it would be easy ",
+      "\"Just build your own browser-less browser!\"",
     ],
   },
   {
@@ -191,7 +185,7 @@ export const slides = [
       "🖼️ const img = new Image; img.src = 'images/me.jpg'; shim",
       "🌐 Fetch / XMLHttpRequest shim",
       "🎮 navigator.getGamepads() shim",
-      "🎧 Web Audio shim",
+      "🎧 Web Audio (FFMpeg + SDL) shim",
       "🙂 FontFace shim",
       "💾 localStorage shim",
       "⚡️ WebSocket shim",
@@ -205,7 +199,7 @@ export const slides = [
     imagePosition: "full",
   },
   {
-    title: "Party like it's 1999 🪩",
+    title: "LAN Party like it's 1999 🪩",
     bullets: [],
     image: "images/lanparty.png",
     imagePosition: "full",
@@ -234,7 +228,7 @@ export const slides = [
       "🌟 Brooooooklyn for napi-rs & napi-rs/canvas",
       "🌟 Konstantin (kmamal) for his node sdl bindings",
       "🌟 Dylan for HalfStack",
-      "🌟 ShelDon't",
+      "🌟 Sheldon !",
       "",
       "FREE AI Hackathon Thursday February 20, 2025, Heatsync, 7pm-10pm",
       "Game Dev hackathon with devices in early March!",
