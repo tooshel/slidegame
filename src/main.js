@@ -30,7 +30,8 @@ const settings = {
   pixelSize: 16,
   throttleFPS: true, // Limit FPS for better performance
   targetFPS: 30,
-  useImageSmoothing: false // Disable image smoothing for better performance
+  useImageSmoothing: false, // Disable image smoothing for better performance
+  showSlideCounter: true // Show slide counter in bottom right
 };
 
 let lastFrameTime = 0;
@@ -122,6 +123,12 @@ function renderSlide(slide, targetCtx) {
   targetCtx.font = '20px Roboto';
   targetCtx.textAlign = 'left';
   targetCtx.fillText(`v${VERSION}`, 10, height - 10);
+
+  // Draw slide counter in bottom-right if enabled
+  if (settings.showSlideCounter) {
+    targetCtx.textAlign = 'right';
+    targetCtx.fillText(`${currentSlide + 1}/${slides.length}`, width - 10, height - 10);
+  }
 
   // Handle image if present
   if (slide.image) {
