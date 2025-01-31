@@ -31,7 +31,8 @@ const settings = {
   throttleFPS: true, // Limit FPS for better performance
   targetFPS: 30,
   useImageSmoothing: false, // Disable image smoothing for better performance
-  showSlideCounter: true // Show slide counter in bottom right
+  showSlideCounter: true, // Show slide counter in bottom right
+  bulletFontSize: height * 0.05 // Configurable bullet point size (was 0.04)
 };
 
 let lastFrameTime = 0;
@@ -50,7 +51,7 @@ const styles = {
   },
   bullets: {
     color: "#ffffff",
-    fontSize: height * 0.04,
+    fontSize: settings.bulletFontSize,
     font: "Arial",
     lineHeight: 1.5,
     marginLeft: width * 0.1,
