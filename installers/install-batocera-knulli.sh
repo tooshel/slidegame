@@ -75,9 +75,9 @@ if [ -d "$HOME/mygame.zip" ]; then
   rm -rf ~/mygame.zip
 fi
 
-if [ -d "$HOME/slidegame-main" ]; then
-  my_echo "=> File ~/slidegame-main exists. Deleting..."
-  rm -rf ~/slidegame-main
+if [ -d "$HOME/${GAME_NAME}-main" ]; then
+  my_echo "=> File ~/${GAME_NAME}-main exists. Deleting..."
+  rm -rf ~/"${GAME_NAME}-main"
 fi
 
 
@@ -100,15 +100,15 @@ if my_distro_check; then
 
   source ~/.bash_profile
   nvm use $NODE_VERSION
-  cd ~/slidegame-main
+  cd ~/"${GAME_NAME}-main"
   
   my_echo "=> Deleting existing ${GAME_NAME} game from ${INSTALL_PATH}"
   rm -rf "${INSTALL_PATH}/${GAME_NAME}"
 
   cd ~
   mkdir -p "${INSTALL_PATH}/${GAME_NAME}"
-  mv slidegame-main/* "${INSTALL_PATH}/${GAME_NAME}"
-  rm -r ~/slidegame-main
+  mv "${GAME_NAME}-main"/* "${INSTALL_PATH}/${GAME_NAME}"
+  rm -r ~/"${GAME_NAME}-main"
 
   cd "${INSTALL_PATH}/${GAME_NAME}"
   if [ "$RUN_NPM_INSTALL" = true ]; then
