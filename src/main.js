@@ -31,7 +31,7 @@ const settings = {
   throttleFPS: true, // Limit FPS for better performance
   targetFPS: 30,
   useImageSmoothing: false, // Disable image smoothing for better performance
-  showSlideCounter: true, // Show slide counter in bottom right
+  showFooter: false, // Show slide counter in bottom right
   bulletFontSize: height * 0.05 // Configurable bullet point size (was 0.04)
 };
 
@@ -119,14 +119,16 @@ function renderSlide(slide, targetCtx) {
   targetCtx.fillStyle = styles.background;
   targetCtx.fillRect(0, 0, width, height);
   
-  // Draw version number in bottom-left corner with improved contrast
-  targetCtx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-  targetCtx.font = '20px Roboto';
-  targetCtx.textAlign = 'left';
-  targetCtx.fillText(`v${VERSION}`, 10, height - 10);
 
   // Draw slide counter in bottom-right if enabled
-  if (settings.showSlideCounter) {
+  if (settings.showFooter) {
+
+    // Draw version number in bottom-left corner with improved contrast
+    targetCtx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+    targetCtx.font = '20px Roboto';
+    targetCtx.textAlign = 'left';
+    targetCtx.fillText(`v${VERSION}`, 10, height - 10);
+
     targetCtx.textAlign = 'right';
     targetCtx.fillText(`${currentSlide + 1}/${slides.length}`, width - 10, height - 10);
   }

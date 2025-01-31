@@ -49,11 +49,7 @@ export const slides = [
 
   {
     title: "I want to make my own ROMs",
-    bullets: [
-      "Atari 2600 ?",
-      "6502 Assembly from 1975",
-      "128 bytes of RAM 😬",
-    ],
+    bullets: ["Atari 2600 ?", "6502 Assembly from 1975", "128 bytes of RAM 😬"],
   },
 
   {
@@ -69,7 +65,7 @@ export const slides = [
       "FullScreen Canvas",
       "WebAudio",
       "Gamepad API",
-      "All the cool web APIs!"
+      "All the cool web APIs!",
     ],
   },
 
@@ -123,10 +119,8 @@ export const slides = [
     ],
   },
   {
-    title: "Sr. Prinicipal Architect Lead :",
-    bullets: [
-      "\"Just build your own browser-less browser!\"",
-    ],
+    title: "Sr. Prinicipal Architect Lead IV",
+    bullets: ['"Just build your own browser-less browser!"'],
   },
   {
     title: "Start with libSDL",
@@ -189,7 +183,7 @@ export const slides = [
       "🙂 FontFace shim",
       "💾 localStorage shim",
       "⚡️ WebSocket shim",
-      "\"Shimmy Shimmy Ya\" -O.D.B.",
+      '"Shimmy Shimmy Ya" -O.D.B.',
     ],
   },
   {
