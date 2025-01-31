@@ -40,7 +40,7 @@ my_reset() {
   unset -f my_has my_echo my_distro_check my_grep
 }
 
-my_echo "=> STARTING SAMPLE GAME INSTALL SCRIPT"
+my_echo "=> STARTING ${GAME_NAME} INSTALL SCRIPT"
 
 if [ -z "${BASH_VERSION}" ] || [ -n "${ZSH_VERSION}" ]; then
   my_echo >&2 'Error: the install instructions explicitly say to pipe the install script to `bash`; please follow them'
